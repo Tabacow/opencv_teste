@@ -11,6 +11,7 @@ class Game:
         self.state = 'not started'
 
     def run(self):
+        self.state = self.get_initial_state()
         while True:
             self.vision.refresh_frame()
 
@@ -47,7 +48,7 @@ class Game:
                 self.state = 'selecting heroes'
 
             if self.state == 'selecting heroes' and self.is_heroes_resting():
-                self.log('scrolling...')
+                self.log('selecting heroes...')
                 self.send_heroes_to_work()
                 self.state = 'lets go to work!'
 
@@ -71,7 +72,7 @@ class Game:
                 
             if(self.state == 'im on game' and self.is_in_game()):
                 self.log('im gamming... >:(')
-                time.sleep(3000)
+                time.sleep(3600)
                 self.state = 'going back to menu'
 
             time.sleep(1)
@@ -119,28 +120,70 @@ class Game:
         time.sleep(0.2)
 
     def send_heroes_to_work(self):
+        self.log("now im selecting heroes...")
         i=1
         while(i<=15):
             self.vision.refresh_frame()
-            match_hero = self.vision.find_template_and_print(str(i), threshold=0.96)
-            match_work = self.vision.find_template('work-off', threshold=0.90)
-            if(np.shape(match_hero)[1] >= 1 and np.shape(match_work)[1] >= 1):
-                x = match_work[1][0] + 10
-                y = match_hero[0][0] + 10
-                self.controller.move_mouse(x,y)
-                time.sleep(0.2)
-                self.controller.left_mouse_click()
+            match = self.vision.find_template('heroes-header', threshold=0.95)
+            x = match[1][0] + 75
+            y = match[0][0] + 75
+            self.controller.move_mouse(x,y)
+            time.sleep(0.2)
+            self.log("trying to find hero...")
+            hero_found=False
+            scroll_count=0
+            while(not(hero_found)):
+                self.vision.refresh_frame()
+                match_hero = self.vision.find_template(str(i), threshold=0.96)
+                match_work = self.vision.find_template('work-off', threshold=0.90)
+                hero_found = np.shape(match_hero)[1] >= 1 and np.shape(match_work)[1] >= 1
+                if(hero_found):
+                    self.log("found hero number " + str(i) + "!")
+                    x = match_work[1][0] + 10
+                    y = match_hero[0][0] + 10
+                    self.controller.move_mouse(x,y)
+                    time.sleep(0.5)
+                    self.controller.left_mouse_click()
+                    time.sleep(0.1)
+                    self.controller.left_mouse_click()
+                    time.sleep(0.1)
+                    self.controller.mouse_scroll(0,-100)
+                    time.sleep(0.1)
+                    self.controller.mouse_scroll(0,-100)
+                    time.sleep(0.1)
+                    self.controller.mouse_scroll(0,-100)
+                    time.sleep(0.1)
+                    self.controller.mouse_scroll(0,-100)
+                    time.sleep(0.1)
+                else:
+                    self.log("still searching...")
+                    self.controller.mouse_scroll(0,-100)
+                    time.sleep(0.1)
+                    self.controller.mouse_scroll(0,-100)
+                    time.sleep(0.1)
+                    self.controller.mouse_scroll(0,-100)
+                    time.sleep(0.1)
+                    self.controller.mouse_scroll(0,-100)
+                    time.sleep(0.1)
+                    scroll_count += 1
+                if (self.check_errors()):
+                    keyboard.press_and_release('F5')
+                    self.state = 'not started'
+            if(scroll_count>0):
+                self.log("going back to where we stopped!")
+            while(scroll_count>0):
+                self.controller.mouse_scroll(0,100)
                 time.sleep(0.1)
-                self.log("i found hero "+ str(i) + "!")
-                i += 1
-            self.controller.mouse_scroll(0,-100)
-            time.sleep(0.1)
-            self.controller.mouse_scroll(0,-100)
-            time.sleep(0.1)
-            self.controller.mouse_scroll(0,-100)
-            time.sleep(0.1)
-            self.controller.mouse_scroll(0,-100)
-            time.sleep(0.1)
+                self.controller.mouse_scroll(0,100)
+                time.sleep(0.1)
+                self.controller.mouse_scroll(0,100)
+                time.sleep(0.1)
+                self.controller.mouse_scroll(0,100)
+                time.sleep(0.1)
+                scroll_count -= 1
+            i += 1
+                
+            
 
     def exit_heroes(self):
         matches = self.vision.find_template('exit-heroes', threshold=0.9)
@@ -191,6 +234,20 @@ class Game:
         time.sleep(0.4)
         self.controller.left_mouse_click()
 
+    def get_initial_state(self):
+        self.log("getting initial state...")
+        if(self.is_connect_screen()):
+            self.log("not started? no problem! starting...")
+            return "not started"
+        if(self.is_menu()):
+            self.log("hmm the menu? can i get spaghetti and meatballs?")
+            return "in menu"
+        if(self.is_on_hero_menu()):
+            self.log("heroes menu? lets send em to work!")
+            return "hero menu"
+        if(self.is_in_game()):
+            self.log("looks like you're in the game, thats not allowed >:(, im going back to the menu!")
+            return "going back to menu"
     def is_select_wallet(self):
         matches = self.vision.find_template('select-wallet', threshold=0.9)
         return np.shape(matches)[1] >= 1

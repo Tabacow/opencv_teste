@@ -38,6 +38,12 @@ class Controller:
         self.mouse.release(Button.left)
         time.sleep(0.2)
 
+    def left_mouse_press(self):
+        self.mouse.press(Button.left)
+        
+    def left_mouse_release(self):
+        self.mouse.release(Button.left)
+
     def left_mouse_drag_move(self,x, y):
         self.mouse.press(Button.left)
         time.sleep(0.2)

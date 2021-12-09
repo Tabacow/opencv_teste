@@ -260,28 +260,12 @@ class Vision:
 
     def find_number_sequence(self, image=None):
         #------------------------------Parte de tratamento da imagem------------------------------
+        self.refresh_frame()
         if image is None:
             if self.frame is None:
                 self.refresh_frame()
             image = self.frame
-        img = image
-            #-----------Adicionando filtros nas fotos-----------                                                                  
-        img_gray = cv2.GaussianBlur(img,(5,5),0)
-        img_gray = cv2.bilateralFilter(img_gray,30,10,40)
-        ret, thresh = cv2.threshold(img_gray, 127, 255, 0)
-        contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        cv2.drawContours(img_gray, contours, -1, (0,255,75), 1)
-        hsv = self.take_screenshot(type='hsv')
-        hsv = cv2.GaussianBlur(hsv,(5,5),0)
-        mask = cv2.inRange(hsv, (0, 0, 100), (255, 5, 255))
-            #-----------Adicionando filtros nas fotos-----------    
-
-            #-----------Adicionando corte das partes indesejadas da tela-----------
-        cv2.line(mask, (0, 1080), (1920, 1080), (0,0,0), 700)
-        cv2.line(mask, (0, 0), (1920, 0), (0,0,0), 750)
-        cv2.line(mask, (0, 0), (0, 1080), (0,0,0), 100)
-        cv2.line(mask, (1920, 0), (1920, 1080), (0,0,0), 300)
-            #-----------Adicionando corte das partes indesejadas da tela-----------
+        
         #------------------------------Parte de tratamento da imagem------------------------------
 
         count = 0
@@ -291,16 +275,15 @@ class Vision:
         number_1_done = False #check se o número foi achado
         number_2_done = False #check se o número foi achado
         number_3_done = False #check se o número foi achado
-        cv2.imwrite('foto_teste.png', mask)
-
+        
         while(number_1 == None or number_2 == None or number_3 == None): #Repete o processo até achar os 3 números
             while(count<=9): #Como só existem números diferentes nos captchas, isso funciona, caso troquem, o código necessitará adaptação
                 print(count)
                 template_name = str(count)+'_mask'
-                match = self.find_template(name=template_name, image=mask, threshold=0.82)
+                match = self.find_template(name=template_name, image=image, threshold=0.82)
                 if(np.shape(match)[1] >= 1):
                     x = match[1][0]
-                    cv2.line(mask, (x, 0), (x+50, 1080), (0,0,0), 50) #Passa uma linha preta em cima do número achado na mask
+                    cv2.line(image, (x, 0), (x+50, 1080), (0,0,0), 50) #Passa uma linha preta em cima do número achado na mask
                     
                     if(not number_1_done):
                         number_1 = [count,x]

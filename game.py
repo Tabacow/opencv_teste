@@ -18,102 +18,90 @@ class Game:
         self.failed_captchas_count = 0
 
     def run(self):
-        self.vision.refresh_frame()
-        print("started")
-        numbers = self.vision.find_number_sequence()
-
-        while(True):
+        while True:
             self.vision.refresh_frame()
-            self.vision.find_captcha_crooked_numbers(numbers)
-            #time.sleep(0.5)
-            print("loop")
-        
-        #while True:
-            #self.vision.refresh_frame()
-#
-            #if (self.check_errors()):
-            #    self.reset_game()
-#
-            #if(self.state == 'no status'):
-            #    self.state = self.get_initial_state()
-#
-            #if(self.check_captcha_popup()):
-            #    self.log("im solving the captcha, this is real hard cause im a robot, ok?")
-            #    self.resolve_captcha()
-            #    self.failed_captchas_count += 1
-            #
-            #if self.state == 'not started' and self.is_connect_screen():
-            #    self.log('Connecting...')
-            #    self.launch_player()
-            #    self.state = 'authorize'
-            #    
-            ##if self.state == 'connecting' and self.is_select_wallet():
-            ##    self.log('Authorizing...')
-            ##    self.login_metamask()
-            ##    self.state = 'authorize'
-#
-            #if self.state == 'authorize' and self.is_authorize() and self.check_metamask_popup_check():
-            #    self.log('Authorized! Now Loading...')
-            #    self.authorize_metamask()
-            #    self.state = 'in menu'
-            #
-            #if self.state == 'in menu' and self.is_menu():
-            #    self.log('in game menu, going to heroes...')
-            #    self.open_heroes()
-            #    self.state = 'heroes opened'
-#
-            #if self.state == 'heroes opened' and self.is_on_hero_menu():
-            #    self.log('in hero menu opened sucessfully')
-            #    self.state = 'hero menu'
-#
-            #if self.state == 'hero menu' and self.is_on_hero_menu():
-            #    self.log('hero menu opened!')
-            #    self.state = 'selecting heroes'
-#
-            #if self.state == 'selecting heroes' and self.is_heroes_resting():
-            #    self.log('selecting heroes...')
-            #    okay = self.send_heroes_to_work()
-            #    if(okay):
-            #        self.state = 'lets go to work!'
-            #    if(not okay):
-            #        self.reset_game()
-#
-            #if self.state == 'lets go to work!' and self.is_on_hero_menu():
-            #    self.log('selecting heroes...')
-            #    self.exit_heroes()
-            #    self.state = 'going to game'
-#
-            #if self.state == 'going back to menu' and self.is_in_game():
-            #    self.log('going back to menu...')
-            #    self.from_game_to_menu()
-            #    self.state = 'in menu'
-#
-            #if self.state == 'going back to menu' and not self.is_in_game():
-            #    self.log("something went wrong, reseting...")
-            #    self.reset_game()
-#
-            #if self.state == 'going to game' and self.is_menu():
-            #    self.log('going to game...')
-            #    self.go_to_game()
-            #    self.state = 'im on game'
-#
-            #if(self.state == 'im on game' and self.is_new_map()):
-            #    self.log('going to next map...')
-            #    self.go_to_next_map()
-            #    
-            #if(self.state == 'im on game' and self.is_in_game()):
-            #    self.log('im gamming... >:(')
-            #    self.counting_work_time()
-            #    if(self.working_time == 0 ):
-            #        self.heroes.change_all_to_false()
-            #        self.heroes.print_hero_status()
-            #        self.state = 'going back to menu'
-#
-            #time.sleep(1)
 
-#    def round_starting(self, player):
-#        matches = self.vision.find_template('%s-health-bar' % player)
-#        return np.shape(matches)[1] >= 1
+            if (self.check_errors()):
+                self.reset_game()
+
+            if(self.state == 'no status'):
+                self.state = self.get_initial_state()
+
+            if(self.check_captcha_popup()):
+                self.log("im solving the captcha, this is real hard cause im a robot, ok?")
+                self.resolve_captcha()
+                self.failed_captchas_count += 1
+            
+            if self.state == 'not started' and self.is_connect_screen():
+                self.log('Connecting...')
+                self.launch_player()
+                self.state = 'authorize'
+                
+            if self.state == 'connecting' and self.is_select_wallet():
+                self.log('Authorizing...')
+                self.login_metamask()
+                self.state = 'authorize'
+
+            if self.state == 'authorize' and self.is_authorize() and self.check_metamask_popup_check():
+                self.log('Authorized! Now Loading...')
+                self.authorize_metamask()
+                self.state = 'in menu'
+            
+            if self.state == 'in menu' and self.is_menu():
+                self.log('in game menu, going to heroes...')
+                self.open_heroes()
+                self.state = 'heroes opened'
+
+            if self.state == 'heroes opened' and self.is_on_hero_menu():
+                self.log('in hero menu opened sucessfully')
+                self.state = 'hero menu'
+
+            if self.state == 'hero menu' and self.is_on_hero_menu():
+                self.log('hero menu opened!')
+                self.state = 'selecting heroes'
+
+            if self.state == 'selecting heroes' and self.is_heroes_resting():
+                self.log('selecting heroes...')
+                okay = self.send_heroes_to_work()
+                if(okay):
+                    self.state = 'lets go to work!'
+                if(not okay):
+                    self.reset_game()
+#
+            if self.state == 'lets go to work!' and self.is_on_hero_menu():
+                self.log('selecting heroes...')
+                self.exit_heroes()
+                self.state = 'going to game'
+#
+            if self.state == 'going back to menu' and self.is_in_game():
+                self.log('going back to menu...')
+                self.from_game_to_menu()
+                self.state = 'in menu'
+#
+            if self.state == 'going back to menu' and not self.is_in_game():
+                self.log("something went wrong, reseting...")
+                self.reset_game()
+#
+            if self.state == 'going to game' and self.is_menu():
+                self.log('going to game...')
+                self.go_to_game()
+                self.state = 'im on game'
+#
+            if(self.state == 'im on game' and self.is_new_map()):
+                self.log('going to next map...')
+                self.go_to_next_map()
+                
+            if(self.state == 'im on game' and self.is_in_game()):
+                self.log('im gamming... >:(')
+                self.counting_work_time()
+                if(self.working_time == 0 ):
+                    self.heroes.change_all_to_false()
+                    self.heroes.print_hero_status()
+                    self.state = 'going back to menu'
+#
+            time.sleep(1)
+
+
 
     def launch_player(self):
         # Try multiple sizes of goalpost due to perspective changes for
@@ -309,8 +297,7 @@ class Game:
         time.sleep(0.4)
         self.controller.left_mouse_click()
 
-    def resolve_captcha(self):
-        #self.logger('checking for capcha')
+    def resolve_captcha_old(self): #captcha resolver from when the captcha was a jigglesaw piece
         self.vision.refresh_frame()
         ROI = self.vision.find_jigsaw()
         time.sleep(0.2)
@@ -373,6 +360,59 @@ class Game:
         #self.controller.move_mouse(slider_awnser,y_start)
         time.sleep(0.2)
         #self.controller.left_mouse_release()
+
+    def resolve_captcha(self):
+        self.vision.refresh_frame()
+        slider_start_pos = self.vision.find_template('slider', threshold=0.80)
+        number_sequence = self.vision.find_number_sequence()
+        if(not np.shape(slider_start_pos)[1] >= 1): #if slider_start_pos is not found, reset
+            self.reset_game()
+            return
+        x_start = slider_start_pos[1][0] + 10
+        y_slider = slider_start_pos[0][0] + 10
+        self.controller.move_mouse(x_start,y_slider)
+        time.sleep(0.1)
+        self.controller.left_mouse_press()
+        time.sleep(0.1)
+        self.controller.move_mouse(x_start+500,y_slider)
+        time.sleep(1)
+        self.vision.refresh_frame()
+        
+        slider_end_pos = self.vision.find_template('slider', threshold=0.80)
+        x_end = slider_end_pos[1][0] + 10
+        time.sleep(1)
+
+        # variação do slider
+        delta_x = abs(x_start - x_end)
+        # Determinando as posições chave do slider
+        first_position  =   x_start
+        second_position =   x_start + delta_x*0.25
+        third_position  =   x_start + delta_x*0.5
+        fourth_position =   x_start + delta_x*0.75
+        fifth_position  =   x_end
+
+        positions = [first_position, second_position, third_position, fourth_position, fifth_position]
+        
+        print(positions)
+
+        for position in positions:
+            print(position)
+            self.controller.move_mouse(position,y_slider)
+            time.sleep(1)
+            self.vision.refresh_frame()
+            found = self.vision.find_captcha_crooked_numbers(number_sequence)
+            if(found):
+                self.log("looks like i did it guys")
+                self.controller.left_mouse_release()
+                time.sleep(1)
+                return
+            else:
+                self.log("not this one...")
+        self.controller.left_mouse_release()
+        self.log("i coulnt make it :(")
+
+        
+        
 
     def get_initial_state(self):
         self.log("getting initial state...")

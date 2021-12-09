@@ -239,29 +239,10 @@ class Vision:
         #self.find_contour('jigsaw')
 
     def find_captcha_crooked_numbers(self, numbers, image=None):
-        if image is None:
-            if self.frame is None:
-                self.refresh_frame()
-            image = self.frame
-        self.refresh_frame
-        img_gray = image
-        img_gray = cv2.GaussianBlur(img_gray,(5,5),0)
-        img_gray = cv2.bilateralFilter(img_gray,30,10,40)
-        ret, thresh = cv2.threshold(img_gray, 127, 255, 0)
-        contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        cv2.drawContours(img_gray, contours, -1, (0,255,75), 1)
-        hsv = self.take_screenshot(type='hsv')
-        hsv = cv2.GaussianBlur(hsv,(5,5),0)
-        mask = cv2.inRange(hsv, (0, 0, 100), (255, 5, 255))
-
-        cv2.line(mask, (0, 1080), (1920, 1080), (0,0,0), 700)
-        cv2.line(mask, (0, 0), (1920, 0), (0,0,0), 750)
-        cv2.line(mask, (0, 0), (0, 1080), (0,0,0), 100)
-        cv2.line(mask, (1920, 0), (1920, 1080), (0,0,0), 300)
         scales = [1.2, 1.1, 1.05, 1.04, 1.03, 1.02, 1.01, 1.0, 0.99, 0.98, 0.97, 0.96, 0.95] 
-        first = self.scaled_find_template(name=(str(numbers[0][0]) + '_crooked_mask'), threshold=0.5, scales=scales) #gets position of template
-        second = self.scaled_find_template(name=(str(numbers[1][0]) + '_crooked_mask'), threshold=0.5, scales=scales) #gets position of template
-        third = self.scaled_find_template(name=(str(numbers[2][0]) + '_crooked_mask'), threshold=0.5, scales=scales) #gets position of template
+        first = self.scaled_find_template(name=(str(numbers[0][0]) + '_crooked_mask'), threshold=0.45, scales=scales) #gets position of template
+        second = self.scaled_find_template(name=(str(numbers[1][0]) + '_crooked_mask'), threshold=0.45, scales=scales) #gets position of template
+        third = self.scaled_find_template(name=(str(numbers[2][0]) + '_crooked_mask'), threshold=0.45, scales=scales) #gets position of template
         
         if(np.shape(first)[1] >= 1 and np.shape(second)[1] >= 1 and np.shape(third)[1] >= 1):
             crooked_numbers_unsorted = [[numbers[0][0], first[1][0]], [numbers[1][0], second[1][0]], [numbers[2][0], third[1][0]]] #creates an array similiar to the numbers array
@@ -278,70 +259,79 @@ class Vision:
         return first_number_is_equal and second_number_is_equal and third_number_is_equal
 
     def find_number_sequence(self, image=None):
+        #------------------------------Parte de tratamento da imagem------------------------------
         if image is None:
             if self.frame is None:
                 self.refresh_frame()
             image = self.frame
         img = image
+            #-----------Adicionando filtros nas fotos-----------                                                                  
         img_gray = cv2.GaussianBlur(img,(5,5),0)
         img_gray = cv2.bilateralFilter(img_gray,30,10,40)
         ret, thresh = cv2.threshold(img_gray, 127, 255, 0)
         contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         cv2.drawContours(img_gray, contours, -1, (0,255,75), 1)
-
         hsv = self.take_screenshot(type='hsv')
         hsv = cv2.GaussianBlur(hsv,(5,5),0)
         mask = cv2.inRange(hsv, (0, 0, 100), (255, 5, 255))
+            #-----------Adicionando filtros nas fotos-----------    
 
+            #-----------Adicionando corte das partes indesejadas da tela-----------
         cv2.line(mask, (0, 1080), (1920, 1080), (0,0,0), 700)
         cv2.line(mask, (0, 0), (1920, 0), (0,0,0), 750)
         cv2.line(mask, (0, 0), (0, 1080), (0,0,0), 100)
         cv2.line(mask, (1920, 0), (1920, 1080), (0,0,0), 300)
+            #-----------Adicionando corte das partes indesejadas da tela-----------
+        #------------------------------Parte de tratamento da imagem------------------------------
+
         count = 0
         number_1 = None
         number_2 = None
         number_3 = None
-        number_1_done = False
-        number_2_done = False
-        number_3_done = False
+        number_1_done = False #check se o número foi achado
+        number_2_done = False #check se o número foi achado
+        number_3_done = False #check se o número foi achado
         cv2.imwrite('foto_teste.png', mask)
 
-        while(number_1 == None or number_2 == None or number_3 == None):
+        while(number_1 == None or number_2 == None or number_3 == None): #Repete o processo até achar os 3 números
             while(count<=9): #Como só existem números diferentes nos captchas, isso funciona, caso troquem, o código necessitará adaptação
-                
+                print(count)
                 template_name = str(count)+'_mask'
-                match = self.find_template(name=template_name, image=mask, threshold=0.9)
+                match = self.find_template(name=template_name, image=mask, threshold=0.82)
                 if(np.shape(match)[1] >= 1):
                     x = match[1][0]
-                    cv2.line(mask, (x, 0), (x+50, 1080), (0,0,0), 50)
+                    cv2.line(mask, (x, 0), (x+50, 1080), (0,0,0), 50) #Passa uma linha preta em cima do número achado na mask
+                    
                     if(not number_1_done):
                         number_1 = [count,x]
+                        print(number_1)
                         break
+
                     if(not number_2_done):
                         number_2 = [count,x]
+                        print(number_2)
                         break
+
                     if(not number_3_done):
                         number_3 = [count,x]
+                        print(number_3)
                         break
+
                 count+=1
             count = 0
-            if(number_1!=None):
+            if(number_1!=None): #check se o número foi achado
                 number_1_done = True
 
-            if(number_2!=None):
+            if(number_2!=None): #check se o número foi achado
                 number_2_done = True
 
-            if(number_3!=None):
+            if(number_3!=None): #check se o número foi achado
                 number_3_done = True
                 
         unsorted_numbers = [number_1, number_2, number_3]
 
-        sorted_numbers = self.sort_number_order(unsorted_numbers)        
+        sorted_numbers = self.sort_number_order(unsorted_numbers)
         
-
-        print(sorted_numbers[0])
-        print(sorted_numbers[1])
-        print(sorted_numbers[2])
         return sorted_numbers
     
     

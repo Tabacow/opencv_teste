@@ -208,6 +208,8 @@ class Game:
             match_hero = self.vision.find_template(str(hero_count), threshold=0.95)
             if(np.shape(match_hero)[1] >= 1):
                 match_work = self.vision.find_template('work-off', threshold=0.9)
+                if(not np.shape(match_work)[1] >= 1):
+                    match_work = self.vision.find_template('work-on', threshold=0.9)
                 if(np.shape(match_work)[1] >= 1):
                     x = match_work[1][0] + 10 + self.add_x_random_movement()
                     y = match_hero[0][0] + 10 + self.add_y_random_movement()

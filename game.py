@@ -149,7 +149,7 @@ class Game:
             time.sleep(0.2)
 
     def search_for_authorize_metamask(self):
-        match = self.vision.find_template('metamask-popup-right-side.png', threshold=0.9)
+        match = self.vision.find_template('metamask-popup-right-side', threshold=0.9)
         if(np.shape(match)[1] >= 1):
                 x = match[1][0] + self.add_x_random_movement()
                 y = match[0][0] + self.add_y_random_movement()

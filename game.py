@@ -166,8 +166,14 @@ class Game:
                 self.reset_game()
                 return
             self.from_game_to_menu()
-            time.sleep(3)
             self.vision.refresh_frame()
+            while(self.is_menu()):
+                self.log("awaiting for menu...")
+                time.sleep(2)
+
+                if(self.check_errors()):
+                    self.reset_game()
+            
             
   
     def send_heroes_to_work(self):

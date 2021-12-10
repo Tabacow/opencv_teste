@@ -2,7 +2,7 @@ import time
 
 class Heroes:
 
-    def __init__(self, one = False, two = False, three = False, four = False, five = False, six = False, seven = False, eight = False, nine = False, ten = False, eleven = False, twelve = False, thirteen = False, fourteen = False):
+    def __init__(self, one = False, two = False, three = False, four = False, five = False, six = False, seven = False, eight = False, nine = False, ten = False, eleven = False, twelve = False, thirteen = False, fourteen = False, fifteen = False):
         self.one = one
         self.two = two
         self.three = three
@@ -17,6 +17,7 @@ class Heroes:
         self.twelve = twelve
         self.thirteen = thirteen
         self.fourteen = fourteen
+        self.fifteen = fifteen
         self.static_templates = {
             "1" : self.one,
             "2" : self.two,
@@ -32,6 +33,7 @@ class Heroes:
             "12" : self.twelve,
             "13" : self.thirteen,
             "14" : self.fourteen,
+            "15" : self.fifteen
         }
 
     def change_all_to_false(self):
@@ -49,6 +51,7 @@ class Heroes:
         self.twelve = False
         self.thirteen = False 
         self.fourteen = False
+        self.fifteen = False
 
     def print_hero_status(self):
         print("heroes  | working? ")
@@ -66,6 +69,7 @@ class Heroes:
         print("hero 12 |" + " " + str(self.twelve))
         print("hero 13 |" + " " + str(self.thirteen))
         print("hero 14 |" + " " + str(self.fourteen))
+        print("hero 15 |" + " " + str(self.fourteen))
 
     def is_all_heroes_working(self): 
         return (self.one 
@@ -81,7 +85,8 @@ class Heroes:
         and self.eleven 
         and self.twelve 
         and self.thirteen 
-        and self.fourteen)
+        and self.fourteen
+        and self.fifteen)
 
     def change_status(self, number, status):
         if(number == 1):
@@ -112,3 +117,5 @@ class Heroes:
             self.thirteen = status
         if(number == 14):
             self.fourteen = status
+        if(number == 15):
+            self.fifteen = status

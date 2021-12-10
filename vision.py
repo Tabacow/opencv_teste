@@ -280,11 +280,13 @@ class Vision:
             while(count<=9): #Como só existem números diferentes nos captchas, isso funciona, caso troquem, o código necessitará adaptação
                 print(count)
                 template_name = str(count)+'_mask'
-                match = self.find_template(name=template_name, image=image, threshold=0.82)
+                match = self.find_template(name=template_name, image=image, threshold=0.75)
                 if(np.shape(match)[1] >= 1):
                     x = match[1][0]
-                    cv2.line(image, (x, 0), (x+50, 1080), (0,0,0), 50) #Passa uma linha preta em cima do número achado na mask
-                    
+                    if(count==1):
+                        cv2.line(image, (x, 0), (x+50, 1080), (0,0,0), 35)#Passa uma linha preta em cima do número achado na mask
+                    else:
+                        cv2.line(image, (x, 0), (x+50, 1080), (0,0,0), 50)
                     if(not number_1_done):
                         number_1 = [count,x]
                         print(number_1)

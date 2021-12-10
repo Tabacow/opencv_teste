@@ -1,9 +1,26 @@
 import time
 from pynput.mouse import Button, Controller as MouseController
-
+import pyautogui
+from random import random
 class Controller:
     def __init__(self):
         self.mouse = MouseController()
+
+    def move_to_with_randomness(self, x,y,t=0.5): #função roubada do mpcabete, valeu! https://github.com/mpcabete/bombcrypto-bot
+        pyautogui.moveTo(self.add_randomness(x,10),self.add_randomness(y,10),t+random()/2)
+
+    def add_randomness(self, n, randomn_factor_size=None): #função roubada do mpcabete, valeu! https://github.com/mpcabete/bombcrypto-bot
+        if randomn_factor_size is None:
+            randomness_percentage = 0.1
+            randomn_factor_size = randomness_percentage * n
+
+        random_factor = 2 * random() * randomn_factor_size
+        if random_factor > 5:
+            random_factor = 5
+        without_average_random_factor = n - randomn_factor_size
+        randomized_n = int(without_average_random_factor + random_factor)
+        # logger('{} with randomness -> {}'.format(int(n), randomized_n))
+        return int(randomized_n)
 
     def move_mouse(self, x, y):
         def set_mouse_position(x, y):

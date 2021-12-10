@@ -370,11 +370,11 @@ class Game:
             return
         x_start = slider_start_pos[1][0] + 10
         y_slider = slider_start_pos[0][0] + 10
-        self.controller.move_mouse(x_start,y_slider)
+        self.controller.move_to_with_randomness(x_start+10,y_slider+10, 0.5)
         time.sleep(0.1)
         self.controller.left_mouse_press()
         time.sleep(0.1)
-        self.controller.move_mouse(x_start+500,y_slider)
+        self.controller.move_to_with_randomness(x_start+400,y_slider, 0.5)
         time.sleep(1)
         self.vision.refresh_frame()
         
@@ -382,6 +382,8 @@ class Game:
         x_end = slider_end_pos[1][0] + 10
         time.sleep(1)
 
+        self.controller.move_to_with_randomness(x_start,y_slider, 0.5)
+        time.sleep(0.1)
         # variação do slider
         delta_x = abs(x_start - x_end)
         # Determinando as posições chave do slider
@@ -395,9 +397,20 @@ class Game:
         
         print(positions)
 
+        mouse_x_movement = x_start
+        mouse_y_movement = y_slider
+        
         for position in positions:
             print(position)
-            self.controller.move_mouse(position,y_slider)
+            threshold = abs(mouse_x_movement - position)
+            while(threshold>=2):
+                mouse_x_movement += 1 + self.add_x_random_movement(x0 = 0, x = 1)
+                mouse_y_movement += self.add_y_random_movement(y0 = -1, y = 1)
+                threshold = abs(mouse_x_movement - position)
+                time.sleep(0.05)
+                print(threshold)
+                self.controller.move_mouse(mouse_x_movement,mouse_y_movement)
+
             time.sleep(1)
             self.vision.refresh_frame()
             found = self.vision.find_captcha_crooked_numbers(number_sequence)

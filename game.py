@@ -31,6 +31,7 @@ class Game:
                 self.log("im solving the captcha, this is real hard cause im a robot, ok?")
                 self.resolve_captcha()
                 self.failed_captchas_count += 1
+                print(self.failed_captchas_count)
             
             if self.state == 'not started' and self.is_connect_screen():
                 self.log('Connecting...')
@@ -166,14 +167,10 @@ class Game:
                 self.reset_game()
                 return
             self.from_game_to_menu()
+            time.sleep(3)
             self.vision.refresh_frame()
-            while(self.is_menu()):
-                self.log("awaiting for menu...")
-                time.sleep(2)
-
-                if(self.check_errors()):
-                    self.reset_game()
             
+            self.state = "going to game"
             
   
     def send_heroes_to_work(self):
@@ -272,7 +269,7 @@ class Game:
         is_error_communication_error =  np.shape(match_communication_error)[1] >= 1
         is_connection_error = np.shape(connection_error)[1] >= 1
         failed_captcha = False
-        if(self.failed_captchas_count > 3):
+        if(self.failed_captchas_count >= 3):
             failed_captcha = True
             self.failed_captchas_count = 0
         return is_error_unknown or is_error_overloaded or is_error_abnormal_disconetion or is_error_socket_1 or is_error_manual or is_error_communication_error or is_connection_error or failed_captcha

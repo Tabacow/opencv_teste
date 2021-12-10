@@ -45,9 +45,9 @@ class Game:
                 self.authorize_metamask()
                 self.state = 'in menu'
 
-            if self.state == 'authorize' and not self.is_authorize() and not self.check_metamask_popup_check():
-                self.log('Let me search for the authorization popup...')
-                self.search_for_authorize_metamask()
+            #if self.state == 'authorize' and not self.is_authorize() and not self.check_metamask_popup_check():
+            #    self.log('Let me search for the authorization popup...')
+            #    self.search_for_authorize_metamask()
             
             if self.state == 'in menu' and self.is_menu():
                 self.log('in game menu, going to heroes...')

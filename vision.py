@@ -275,10 +275,9 @@ class Vision:
         number_1_done = False #check se o número foi achado
         number_2_done = False #check se o número foi achado
         number_3_done = False #check se o número foi achado
-        
-        while(number_1 == None or number_2 == None or number_3 == None): #Repete o processo até achar os 3 números
+        number_iteration_counter = 0
+        while(number_iteration_counter<3): #Repete o processo até achar os 3 números
             while(count<=9): #Como só existem números diferentes nos captchas, isso funciona, caso troquem, o código necessitará adaptação
-                print(count)
                 template_name = str(count)+'_mask'
                 match = self.find_template(name=template_name, image=image, threshold=0.75)
                 if(np.shape(match)[1] >= 1):
@@ -312,6 +311,7 @@ class Vision:
 
             if(number_3!=None): #check se o número foi achado
                 number_3_done = True
+            number_iteration_counter += 1
                 
         unsorted_numbers = [number_1, number_2, number_3]
 

@@ -14,7 +14,7 @@ class Game:
         self.state = 'no status'
         self.working_time = 0 # working_time is set on seconds!
         self.shift_count = 0
-        self.current_working_heroes = 4 # how many heroes you have?
+        self.current_working_heroes = 15 # how many heroes you have?
         self.failed_captchas_count = 0
 
     def run(self):

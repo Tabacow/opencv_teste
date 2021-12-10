@@ -45,7 +45,7 @@ class Game:
 
             if self.state == 'authorize' and not self.is_authorize() and not self.check_metamask_popup_check():
                 self.log('Let me search for the authorization popup...')
-                self.authorize_metamask()
+                self.search_for_authorize_metamask()
             
             if self.state == 'in menu' and self.is_menu():
                 self.log('in game menu, going to heroes...')
@@ -147,8 +147,15 @@ class Game:
             time.sleep(0.2)
 
     def search_for_authorize_metamask(self):
-         match = self.vision.find_template()
-    
+        match = self.vision.find_template('metamask-popup-right-side.png', threshold=0.9)
+        if(np.shape(match)[1] >= 1):
+                x = match[1][0] + self.add_x_random_movement()
+                y = match[0][0] + self.add_y_random_movement()
+                self.controller.move_mouse(x+45,y+20)
+                time.sleep(0.2)
+                self.controller.left_mouse_click()
+                time.sleep(0.2)
+                
     def open_heroes(self):
         matches = self.vision.find_template('heroes', threshold=0.9)
         x = matches[1][0] + self.add_x_random_movement()

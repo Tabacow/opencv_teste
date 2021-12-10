@@ -29,8 +29,10 @@ class Game:
 
             if(self.check_captcha_popup()):
                 self.log("im solving the captcha, this is real hard cause im a robot, ok?")
-                self.resolve_captcha()
+                okay = self.resolve_captcha()
                 self.failed_captchas_count += 1
+                if(okay):
+                    self.failed_captchas_count = 0
                 print(self.failed_captchas_count)
             
             if self.state == 'not started' and self.is_connect_screen():
@@ -426,7 +428,7 @@ class Game:
                     self.log("looks like i did it guys")
                     self.controller.left_mouse_release()
                     time.sleep(1)
-                    return
+                    return True
                 else:
                     self.log("not this one...")
                 counter += 1
@@ -434,6 +436,7 @@ class Game:
 
         self.controller.left_mouse_release()
         self.log("i coulnt make it :(")
+        return False
 
         
         

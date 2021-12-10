@@ -155,7 +155,7 @@ class Game:
                 time.sleep(0.2)
                 self.controller.left_mouse_click()
                 time.sleep(0.2)
-                
+
     def open_heroes(self):
         matches = self.vision.find_template('heroes', threshold=0.9)
         x = matches[1][0] + self.add_x_random_movement()
@@ -412,20 +412,26 @@ class Game:
                 mouse_x_movement += 1 + self.add_x_random_movement(x0 = 0, x = 1)
                 mouse_y_movement += self.add_y_random_movement(y0 = -1, y = 1)
                 threshold = abs(mouse_x_movement - position)
-                time.sleep(0.05)
+                time.sleep(0.025)
                 print(threshold)
                 self.controller.move_mouse(mouse_x_movement,mouse_y_movement)
 
             time.sleep(1)
-            self.vision.refresh_frame()
-            found = self.vision.find_captcha_crooked_numbers(number_sequence)
-            if(found):
-                self.log("looks like i did it guys")
-                self.controller.left_mouse_release()
-                time.sleep(1)
-                return
-            else:
-                self.log("not this one...")
+            
+            counter= 0
+            while(counter < 3):
+                self.vision.refresh_frame()
+                found = self.vision.find_captcha_crooked_numbers(number_sequence)
+                if(found):
+                    self.log("looks like i did it guys")
+                    self.controller.left_mouse_release()
+                    time.sleep(1)
+                    return
+                else:
+                    self.log("not this one...")
+                counter += 1
+                time.sleep(0.1)
+
         self.controller.left_mouse_release()
         self.log("i coulnt make it :(")
 

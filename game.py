@@ -37,16 +37,15 @@ class Game:
                 self.log('Connecting...')
                 self.launch_player()
                 self.state = 'authorize'
-                
-            if self.state == 'connecting' and self.is_select_wallet():
-                self.log('Authorizing...')
-                self.login_metamask()
-                self.state = 'authorize'
 
             if self.state == 'authorize' and self.is_authorize() and self.check_metamask_popup_check():
                 self.log('Authorized! Now Loading...')
                 self.authorize_metamask()
                 self.state = 'in menu'
+
+            if self.state == 'authorize' and not self.is_authorize() and not self.check_metamask_popup_check():
+                self.log('Let me search for the authorization popup...')
+                self.authorize_metamask()
             
             if self.state == 'in menu' and self.is_menu():
                 self.log('in game menu, going to heroes...')
@@ -146,6 +145,9 @@ class Game:
             time.sleep(0.2)
             keyboard.press_and_release('enter')
             time.sleep(0.2)
+
+    def search_for_authorize_metamask(self):
+         match = self.vision.find_template()
     
     def open_heroes(self):
         matches = self.vision.find_template('heroes', threshold=0.9)
@@ -207,9 +209,9 @@ class Game:
             self.log("looking for hero " + str(hero_count))
             match_hero = self.vision.find_template(str(hero_count), threshold=0.95)
             if(np.shape(match_hero)[1] >= 1):
-                match_work = self.vision.find_template('work-off', threshold=0.9)
+                match_work = self.vision.find_template('work-off', threshold=0.8)
                 if(not np.shape(match_work)[1] >= 1):
-                    match_work = self.vision.find_template('work-on', threshold=0.9)
+                    match_work = self.vision.find_template('work-on', threshold=0.8)
                 if(np.shape(match_work)[1] >= 1):
                     x = match_work[1][0] + 10 + self.add_x_random_movement()
                     y = match_hero[0][0] + 10 + self.add_y_random_movement()
@@ -284,15 +286,6 @@ class Game:
             self.controller.move_mouse(x+20,y+20)
             time.sleep(0.4)
             self.controller.left_mouse_click()
-
-    #def is_everyone_sleeping(self):
-    #    blank_sleep = self.vision.count_item_on_image(object="blank-sleep")
-    #    one_z = self.vision.count_item_on_image(object="one-z-sleep")
-    #    two_z = self.vision.count_item_on_image(object="two-z-sleep")
-    #    three_z = self.vision.count_item_on_image(object="three-z-sleep")
-    #    total = blank_sleep + one_z + two_z + three_z
-    #    self.log("i found " + str(total) + ' sleepyheads!') 
-    #    return total == 15
 
     def go_to_next_map(self):
         matches = self.vision.find_template('new-map', threshold=0.6)

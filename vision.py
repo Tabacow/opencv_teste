@@ -91,6 +91,7 @@ class Vision:
             '7_mask' : 'assets/captcha/7_mask.png',
             '8_mask' : 'assets/captcha/8_mask.png',
             '9_mask' : 'assets/captcha/9_mask.png',
+            'metamask-popup-right-side': 'assets/metamask-popup-right-side.png',
             'slider': 'assets/slider.png',
             'are_you_a_robot': 'assets/are_you_a_robot.png',
             'blank-sleep': 'assets/sleep/blank-sleep.png',

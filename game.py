@@ -415,7 +415,6 @@ class Game:
                 mouse_y_movement += self.add_y_random_movement(y0 = -1, y = 1)
                 threshold = abs(mouse_x_movement - position)
                 time.sleep(0.025)
-                print(threshold)
                 self.controller.move_mouse(mouse_x_movement,mouse_y_movement)
 
             time.sleep(1)
@@ -432,6 +431,7 @@ class Game:
                 else:
                     self.log("not this one...")
                 counter += 1
+                print(counter)
                 time.sleep(0.1)
 
         self.controller.left_mouse_release()

@@ -248,20 +248,7 @@ class Vision:
         cv2.line(frame, (1920, 0), (1920, 1080), (0,0,0), 300)
         first = self.scaled_find_template(name=(str(numbers[0][0]) + '_crooked_mask'), threshold=0.45, scales=scales, image=frame) #gets position of template
         second = self.scaled_find_template(name=(str(numbers[1][0]) + '_crooked_mask'), threshold=0.45, scales=scales, image=frame) #gets position of template
-        third = self.scaled_find_template(name=(str(numbers[2][0]) + '_crooked_mask'), threshold=0.45, scales=scales, image=frame) #gets position of template
-        
-        if(np.shape(first)[1] >= 1):
-            print("achei o primeiro")
-            print(first[1][0])
-        if(np.shape(second)[1] >= 1):
-            print("achei o segundo")
-            print(second[1][0])
-        if(np.shape(third)[1] >= 1):
-            print("achei o terceiro")
-            print(third[1][0])
-
-
-
+        third = self.scaled_find_template(name=(str(numbers[2][0]) + '_crooked_mask'), threshold=0.45, scales=scales, image=frame) #gets position of templates
         if(np.shape(first)[1] >= 1 and np.shape(second)[1] >= 1 and np.shape(third)[1] >= 1):
             crooked_numbers_unsorted = [[numbers[0][0], first[1][0]], [numbers[1][0], second[1][0]], [numbers[2][0], third[1][0]]] #creates an array similiar to the numbers array
             sorted_crooked_numbers = self.sort_number_order(crooked_numbers_unsorted)
@@ -302,17 +289,14 @@ class Vision:
                         cv2.line(image, (x, 0), (x+50, 1080), (0,0,0), 50)
                     if(not number_1_done):
                         number_1 = [count,x]
-                        print(number_1)
                         break
 
                     if(not number_2_done):
                         number_2 = [count,x]
-                        print(number_2)
                         break
 
                     if(not number_3_done):
                         number_3 = [count,x]
-                        print(number_3)
                         break
 
                 count+=1
@@ -385,48 +369,7 @@ class Vision:
         return ROI
 
 
-    def findPuzzlePieces(self, result, piece_img, threshold=0.8):
-        piece_w = piece_img.shape[1]
-        piece_h = piece_img.shape[0]
-        yloc, xloc = np.where(result >= threshold)
-    
-
-        r= []
-        for (piece_x, piece_y) in zip(xloc, yloc):
-            r.append([int(piece_x), int(piece_y), int(piece_w), int(piece_h)])
-            r.append([int(piece_x), int(piece_y), int(piece_w), int(piece_h)])
-    
-    
-        r, weights = cv2.groupRectangles(r, 1, 0.2)
-        
-        if len(r) < 1:
-            print('threshold = %.3f' % threshold)
-            return self.findPuzzlePieces(result, piece_img,threshold-0.01)
-    
-        if len(r) == 1:
-            print('match')
-            return r
-    
-        if len(r) > 1:
-            print('overshoot by %d' % len(r))
-            cv2.imwrite('overshoot.png', result)
-            cv2.imwrite("debug.png", self.frame)
-            return r
-
-
-    def getRightPiece(self, puzzle_pieces):
-        xs = [row[0] for row in puzzle_pieces]
-        index_of_right_rectangle = xs.index(max(xs))
-
-        right_piece = puzzle_pieces[index_of_right_rectangle]
-        return right_piece
-
-    def getLeftPiece(self, puzzle_pieces):
-        xs = [row[0] for row in puzzle_pieces]
-        index_of_left_rectangle = xs.index(min(xs))
-
-        left_piece = puzzle_pieces[index_of_left_rectangle]
-        return left_piece
+ 
 
     def scaled_find_template(self, name, image=None, threshold=0.9, scales=[1.0, 0.9, 1.1]):
         if image is None:

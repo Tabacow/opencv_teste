@@ -407,15 +407,12 @@ class Game:
 
         positions = [first_position, second_position, third_position, fourth_position, fifth_position]
         
-        print(positions)
-
         mouse_x_movement = x_start
         mouse_y_movement = y_slider
         
         
 
         for position in positions:
-            print(position)
             threshold = abs(mouse_x_movement - position)
             while(threshold>=2):
                 mouse_x_movement += 1 + self.add_x_random_movement(x0 = 0, x = 1)
@@ -447,7 +444,6 @@ class Game:
                 else:
                     self.log("not this one...")
                 counter += 1
-                print(counter)
                 time.sleep(0.1)
                 check_tries.append(check_array)
 

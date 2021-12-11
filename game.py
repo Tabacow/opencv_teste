@@ -40,6 +40,10 @@ class Game:
                 self.launch_player()
                 self.state = 'authorize'
 
+            if(not self.state == 'not started' and self.is_connect_screen()):
+                self.log("im not supposed to be here")
+                self.reset_game()
+
             if self.state == 'authorize' and self.is_authorize() and self.check_metamask_popup_check():
                 self.log('Authorized! Now Loading...')
                 self.authorize_metamask()
@@ -420,7 +424,7 @@ class Game:
             time.sleep(1)
             
             counter= 0
-            while(counter < 3):
+            while(counter < 10):
                 self.vision.refresh_frame()
                 found = self.vision.find_captcha_crooked_numbers(number_sequence)
                 if(found):

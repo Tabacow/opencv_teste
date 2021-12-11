@@ -40,7 +40,8 @@ class Game:
                 self.launch_player()
                 self.state = 'authorize'
 
-            if(not self.state == 'not started' and self.is_connect_screen()):
+            self.vision.refresh_frame()
+            if(not (self.state == 'not started' or self.state=='authorize') and self.is_connect_screen()):
                 self.log("im not supposed to be here")
                 self.reset_game()
 
@@ -424,7 +425,7 @@ class Game:
             time.sleep(1)
             
             counter= 0
-            while(counter < 10):
+            while(counter < 5):
                 self.vision.refresh_frame()
                 found = self.vision.find_captcha_crooked_numbers(number_sequence)
                 if(found):

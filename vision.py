@@ -240,11 +240,28 @@ class Vision:
         #self.find_contour('jigsaw')
 
     def find_captcha_crooked_numbers(self, numbers, image=None):
-        scales = [1.2, 1.1, 1.05, 1.04, 1.03, 1.02, 1.01, 1.0, 0.99, 0.98, 0.97, 0.96, 0.95] 
-        first = self.scaled_find_template(name=(str(numbers[0][0]) + '_crooked_mask'), threshold=0.45, scales=scales) #gets position of template
-        second = self.scaled_find_template(name=(str(numbers[1][0]) + '_crooked_mask'), threshold=0.45, scales=scales) #gets position of template
-        third = self.scaled_find_template(name=(str(numbers[2][0]) + '_crooked_mask'), threshold=0.45, scales=scales) #gets position of template
+        scales = [1.2, 1.1, 1.05, 1.04, 1.03, 1.02, 1.01, 1.0, 0.99, 0.98, 0.97, 0.96, 0.95]
+        frame = self.frame
+        cv2.line(frame, (0, 1080), (1920, 1080), (0,0,0), 700)
+        cv2.line(frame, (0, 0), (1920, 0), (0,0,0), 750)
+        cv2.line(frame, (0, 0), (0, 1080), (0,0,0), 100)
+        cv2.line(frame, (1920, 0), (1920, 1080), (0,0,0), 300)
+        first = self.scaled_find_template(name=(str(numbers[0][0]) + '_crooked_mask'), threshold=0.45, scales=scales, image=frame) #gets position of template
+        second = self.scaled_find_template(name=(str(numbers[1][0]) + '_crooked_mask'), threshold=0.45, scales=scales, image=frame) #gets position of template
+        third = self.scaled_find_template(name=(str(numbers[2][0]) + '_crooked_mask'), threshold=0.45, scales=scales, image=frame) #gets position of template
         
+        if(np.shape(first)[1] >= 1):
+            print("achei o primeiro")
+            print(first[1][0])
+        if(np.shape(second)[1] >= 1):
+            print("achei o segundo")
+            print(second[1][0])
+        if(np.shape(third)[1] >= 1):
+            print("achei o terceiro")
+            print(third[1][0])
+
+
+
         if(np.shape(first)[1] >= 1 and np.shape(second)[1] >= 1 and np.shape(third)[1] >= 1):
             crooked_numbers_unsorted = [[numbers[0][0], first[1][0]], [numbers[1][0], second[1][0]], [numbers[2][0], third[1][0]]] #creates an array similiar to the numbers array
             sorted_crooked_numbers = self.sort_number_order(crooked_numbers_unsorted)
@@ -280,7 +297,7 @@ class Vision:
         while(number_iteration_counter<3): #Repete o processo até achar os 3 números
             while(count<=9): #Como só existem números diferentes nos captchas, isso funciona, caso troquem, o código necessitará adaptação
                 template_name = str(count)+'_mask'
-                match = self.find_template(name=template_name, image=image, threshold=0.75)
+                match = self.find_template(name=template_name, image=image, threshold=0.8)
                 if(np.shape(match)[1] >= 1):
                     x = match[1][0]
                     if(count==1):

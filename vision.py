@@ -265,16 +265,12 @@ class Vision:
         if(np.shape(first)[1] >= 1 and np.shape(second)[1] >= 1 and np.shape(third)[1] >= 1):
             crooked_numbers_unsorted = [[numbers[0][0], first[1][0]], [numbers[1][0], second[1][0]], [numbers[2][0], third[1][0]]] #creates an array similiar to the numbers array
             sorted_crooked_numbers = self.sort_number_order(crooked_numbers_unsorted)
-            if(self.is_correct_number_order(numbers, sorted_crooked_numbers)):
-                return True
-        return False
+            return sorted_crooked_numbers
+        return None
 
 
-    def is_correct_number_order(self, numbers, crooked_numbers): #(pergunta)
-        first_number_is_equal = (numbers[0][0] == crooked_numbers[0][0])
-        second_number_is_equal = (numbers[1][0] == crooked_numbers[1][0])
-        third_number_is_equal = (numbers[2][0] == crooked_numbers[2][0])
-        return first_number_is_equal and second_number_is_equal and third_number_is_equal
+
+    
 
     def find_number_sequence(self, image=None):
         #------------------------------Parte de tratamento da imagem------------------------------
@@ -296,12 +292,12 @@ class Vision:
         number_iteration_counter = 0
         while(number_iteration_counter<3): #Repete o processo até achar os 3 números
             while(count<=9): #Como só existem números diferentes nos captchas, isso funciona, caso troquem, o código necessitará adaptação
-                template_name = str(count)+'_mask'
-                match = self.find_template(name=template_name, image=image, threshold=0.8)
+                template_name = str(count)+'_captcha'
+                match = self.find_template(name=template_name, image=image, threshold=0.9)
                 if(np.shape(match)[1] >= 1):
                     x = match[1][0]
                     if(count==1):
-                        cv2.line(image, (x, 0), (x+50, 1080), (0,0,0), 35)#Passa uma linha preta em cima do número achado na mask
+                        cv2.line(image, (x, 0), (x+50, 1080), (0,0,0), 30)#Passa uma linha preta em cima do número achado na mask
                     else:
                         cv2.line(image, (x, 0), (x+50, 1080), (0,0,0), 50)
                     if(not number_1_done):

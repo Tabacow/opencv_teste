@@ -412,6 +412,8 @@ class Game:
         mouse_x_movement = x_start
         mouse_y_movement = y_slider
         
+        
+
         for position in positions:
             print(position)
             threshold = abs(mouse_x_movement - position)
@@ -425,10 +427,19 @@ class Game:
             time.sleep(1)
             
             counter= 0
+
+            check_tries = []
             while(counter < 5):
                 self.vision.refresh_frame()
-                found = self.vision.find_captcha_crooked_numbers(number_sequence)
-                if(found):
+                crooked_number_sequence = self.vision.find_captcha_crooked_numbers(number_sequence)
+                if(crooked_number_sequence == None):
+                    counter += 1
+                    continue
+                check_array = self.is_correct_number_order_by_position(number_sequence, crooked_number_sequence)
+                found = self.is_correct_number_order(number_sequence, crooked_number_sequence)
+
+                
+                if(np.all(check_array)):
                     self.log("looks like i did it guys")
                     self.controller.left_mouse_release()
                     time.sleep(1)
@@ -438,13 +449,24 @@ class Game:
                 counter += 1
                 print(counter)
                 time.sleep(0.1)
+                check_tries.append(check_array)
 
         self.controller.left_mouse_release()
         self.log("i coulnt make it :(")
         return False
 
         
+    def is_correct_number_order(self, numbers, crooked_numbers): #(pergunta)
+        first_number_is_equal = (numbers[0][0] == crooked_numbers[0][0])
+        second_number_is_equal = (numbers[1][0] == crooked_numbers[1][0])
+        third_number_is_equal = (numbers[2][0] == crooked_numbers[2][0])
+        return first_number_is_equal and second_number_is_equal and third_number_is_equal
         
+    def is_correct_number_order_by_position(self, numbers, crooked_numbers): #(pergunta)
+        first_number_is_equal = (numbers[0][0] == crooked_numbers[0][0])
+        second_number_is_equal = (numbers[1][0] == crooked_numbers[1][0])
+        third_number_is_equal = (numbers[2][0] == crooked_numbers[2][0])
+        return [first_number_is_equal, second_number_is_equal, third_number_is_equal]
 
     def get_initial_state(self):
         self.log("getting initial state...")

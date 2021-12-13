@@ -409,8 +409,6 @@ class Game:
         
         mouse_x_movement = x_start
         mouse_y_movement = y_slider
-        
-        
 
         for position in positions:
             threshold = abs(mouse_x_movement - position)
@@ -430,13 +428,14 @@ class Game:
                 self.vision.refresh_frame()
                 crooked_number_sequence = self.vision.find_captcha_crooked_numbers(number_sequence)
                 if(crooked_number_sequence == None):
+                    self.log("i havent found a single number...")
                     counter += 1
                     continue
                 check_array = self.is_correct_number_order_by_position(number_sequence, crooked_number_sequence)
-                found = self.is_correct_number_order(number_sequence, crooked_number_sequence)
+                #found = self.is_correct_number_order(number_sequence, crooked_number_sequence)
+                check_tries.append(check_array)
 
-                
-                if(np.all(check_array)):
+                if(self.check_order_completion(check_tries)):
                     self.log("looks like i did it guys")
                     self.controller.left_mouse_release()
                     time.sleep(1)
@@ -445,12 +444,24 @@ class Game:
                     self.log("not this one...")
                 counter += 1
                 time.sleep(0.1)
-                check_tries.append(check_array)
+                
 
         self.controller.left_mouse_release()
         self.log("i coulnt make it :(")
         return False
 
+    def check_order_completion(self, check_array):
+        first_result = False
+        second_result = False
+        third_result = False
+        for check in check_array:
+            if(check[0]):
+                first_result = True
+            if(check[1]):
+                second_result = True
+            if(check[2]):
+                third_result = True
+        return first_result and second_result and third_result
         
     def is_correct_number_order(self, numbers, crooked_numbers): #(pergunta)
         first_number_is_equal = (numbers[0][0] == crooked_numbers[0][0])
